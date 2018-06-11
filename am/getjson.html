@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> getjson</title>
+</head>
+<body>
+    <button onclick="getJsonData()">获取json数据</button>
+    <div id="result"></div>
+</body>
+<script type="text/javascript">
+    function getJsonData(){
+        var xhr = new XMLHttpRequest();
+        var html = '';
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                //把服务端返回的json格式的字符串变为js可以解析的变量
+                var json = JSON.parse(xhr.responseText);
+                //eval函数会把参数中的值当成js代码执行,
+                // eval("var json1 = '('+xhr.responseText+')'");
+                    for(var i=0,length=json.length;i<length;i++){
+                        //取出数组的第i个对象用户名和年龄
+                        var username = json[i].username;
+                        var age = json[i].age;
+                        html += "用户名:"+username+"--年龄:"+age;
+                    }
+                    document.getElementById('result').innerHTML = html;
+            }
+        }
+        xhr.open('get','getjson.php',true);
+        xhr.send(null);
+    }
+</script>
+</html>

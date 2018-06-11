@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    省：
+    <select name="" id="sheng" onchange="getRegion(this,'city')">
+        <option value="">请选择</option>
+    </select> 
+
+   市：
+    <select name="" id="city" onchange="getRegion(this,'quxian')">
+        <option value="0">请选择</option>
+    </select>
+
+    区/县：
+    <select name="" id="quxian">
+        <option value="0">请选择</option>
+    </select>
+
+</body>
+<script>
+
+
+
+    //定义一个方法拉取所有数据
+    function getRegion(sel,region){
+        //当用户切换（onchange发生）省份的时候，应该把区县的select框保留一个请选择的默认值
+        if(region == 'city'){
+            document.getElementById('quxian').length = 1;
+        }
+        //当用户切换了省或市的请选择，没有必要发送ajax请求
+        if(sel.selectedIndex == 0){
+            //此时需要把城市的select框保留一个请选择
+            sel.nextElementSibling.length = 1;
+            return false;// 直接退出，不要发送ajax
+        }
+        //因为页面加载完毕就会触发此方法
+        //第一次触发sel的值是固定值‘1’，到切换select的时候，sel变量就是当前select框的对象了
+        var pid = (sel == '1')?'1':sel.value;
+        console.log(pid);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4 && xhr.status == 200){
+                //循环之前应该把对应的select框清空,length设置0代表清空,length设置为1就会保留第一个option
+                document.getElementById(region).length = 1;
+                //把后台输出的json格式数据转变为js可以解析的变量
+                var json     = JSON.parse(xhr.responseText);
+                for(var i=0,length = json.length;i<length;i++){
+                    //取出每个地区的id和text值,写在创建的option标签中
+                    var option = new Option(json[i].text,json[i].id);
+                    //把创建好的option标签追加到对应的region的select标签中
+                    document.getElementById(region).options.add(option);
+                }
+            }
+        }
+        xhr.open('get','getRegion.php?pid='+pid,true);
+        xhr.send(null);
+    }
+    //默认加载所有的省份
+    // select * from region where pid = 1
+    getRegion('1','sheng');
+
+
+</script>
+123
+</html>

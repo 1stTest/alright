@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsonp</title>
+    <script type="text/javascript">
+        function getData(){
+            //创建一个script标签,设置src属性指向其他域名的某个文件
+            var script = document.createElement("script");
+            script.setAttribute('src',"http://www.php26.com/August/0831/pm/jsonp.php?name=JayChou&callback=test");
+            //把创建好的script标签追加到head标签中去,从而发生请求
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+        function test(data){
+            console.log(JSON.parse(data));
+        }
+    </script>
+</head>
+<body>
+    <button onclick="getData()">jsonp请求</button>
+</body>
+</html>

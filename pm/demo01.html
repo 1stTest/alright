@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo01</title>
+    
+</head>
+<body>
+    <button onclick = "getWeatherData()">获取天气信息</button>
+</body>
+<script type="text/javascript">
+        function getWeatherData(){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4&&xhr.status == 200){
+                    var weather = JSON.parse(xhr.responseText);
+                    // console.log(weather);
+                    var city = weather.weatherinfo.city;
+                    // alert(city);
+                    var temp = weather.weatherinfo.temp;
+                    document.getElementById('result').innerHTML = "城市:"+city+"温度"+temp;
+                }
+            }
+            //Ajax域名在local.com不可以请求其他域名上面的数据
+            xhr.open('get','weather.php',true);
+            xhr.send(null);
+        }
+    </script>
+</html>

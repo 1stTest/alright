@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>getjson</title>
+</head>
+<body>
+    <button onclick="getJsonData()">获取json数据</button>
+    <div id="result"></div>
+</body>
+<script type="text/javascript">
+    function getJsonData(){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                //把服务器输出的json数据变为js可以解析的变量
+                var json = JSON.parse(xhr.responseText);
+                // eval("var num=3+5");
+                //在eval函数中,把json字符串边界两边加一个(和),可以把json字符串变为js 可以解析的变量
+                // eval("var json = ("+xhr.responseText+')');
+                var html = "";
+                for(var i=0,length = json.length;i<length;i++){
+                    var username = json[i].username;
+                    var age = json[i].age;
+                    html += "<br>用户名:"+username+"--年龄:"+age;
+                }
+                document.getElementById('result').innerHTML = html;
+            }
+        }
+        xhr.open('get','getjson.php',true);
+        xhr.send(null);
+    }
+</script>
+</html>

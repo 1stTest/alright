@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>region</title>
+</head>
+<body>
+    省:  <select name="sheng" onchange="getRegion(this,'shi')" id="sheng">
+        <option value="">请选择</option>
+    </select>
+    市:  <select name="shi" onchange="getRegion(this,'quxian')" id="shi">
+        <option value="">请选择</option>
+    </select>
+    区/县:    <select name="quxian" id="quxian">
+        <option value="">请选择</option>
+    </select>
+</body>
+<script type="text/javascript">
+    //define a function of get the relation of region
+    function getRegion(pid,region){
+        if(pid.selectedIndex == 0){
+            pid.nextElementSibling.length = 1;
+            return false;//退出函数,不再发送Ajax请求
+
+        }
+        //由于第一次默认加载pid是1,切换的时候pid就变为对应的select的对象
+        var pid = (pid == '1')?pid:pid.value;
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                //保留对应的select对象第一个默认的请选择option元素,length设置为1,设置0代表清空
+                document.getElementById(region).length = 1;
+                //把地区的json数据变为js可以解析的变量
+                var json_data = JSON.parse(xhr.responseText);
+                for(var i=0,length = json_data.length;i<length;i++){
+                    //创建option标签追加到对应的region变量的select中
+                    var op = new Option(json_data[i].text,json_data[i].id);
+                    document.getElementById(region).options.add(op);
+                }
+            }
+        }
+        xhr.open('get','region.php?pid='+pid,true);
+        xhr.send(null);
+    }
+    //页面加载完成后应该获取所有的省份
+    getRegion('1','sheng');
+</script>
+ 
+</html>

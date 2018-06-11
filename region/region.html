@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>region</title>
+</head>
+<body>
+    省:  <select name="" id="sheng" onchange="getRegion(this,'shi')">
+        <option value="0">请选择</option>
+    </select>
+    市:  <select name="" id="shi" onchange="getRegion(this,'quxian')">
+        <option value="0">请选择</option>
+    </select>
+    区/县:    <select name="" id="quxian">
+        <option value="0">请选择</option>
+    </select>
+    <button onclick="getWeatherData()">查询天气</button>
+    <div id="result"></div>
+</body>
+<script type="text/javascript">
+    // 获取天气的方法
+    function getWeatherData(){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                console.log(xhr.responseText);
+                var weather = JSON.parse(xhr.responseText);
+                var city = weather.weatherinfo.city;
+                var WD = weather.weatherinfo.WD;
+                var temp = weather.weatherinfo.temp;
+                var SD = weather.weatherinfo.SD;
+                var WS = weather.weatherinfo.WS;
+                document.getElementById('result').innerHTML = "城市:"+city+"风向:"+WD+"温度:"+temp+"湿度:"+SD+"风速"+WS;
+            }
+        }
+        xhr.open('get','region.php',true);
+        xhr.send(null);
+    }
+
+    //默认拉取所有的省份的数据
+    function getRegion(sel,region){
+        /*当用户切换(onchange发生)省份的时候*/
+        if(region == 'shi'){
+            document.getElementById('quxian').length = 1;
+        }
+        /*当用户切换了省或市的请选择,没有必要发送Ajax请求*/
+        if(sel.selectedIndex==0){
+            /*此时需要把城市的select框保留一个请选择*/
+            sel.nextElementSibling.length = 1;
+            return false;//直接退出,不发送Ajax
+        }
+        //因为页面加载完毕会触发此方法
+        /*第一次触发sel的值是固定值是'1',当切换select的时候,sel就是当前select框的对象*/
+        var pid = (sel == '1')?'1':sel.value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                /*循环之前应该把对应的select框清空,length设置为1就是保留第一个option元素*/
+                document.getElementById(region).length = 1;
+                //把后台输出的json格式数据转变为json可以解析的变量
+                var json = JSON.parse(xhr.responseText);
+                for(var i=0,length=json.length;i<length;i++){
+                    //取出每个地区的id和text值,创建option标签
+                    
+                    var option = new Option(json[i].text,json[i].id);
+                    //把创建好的option标签追加到对应的region的select标签中
+                    document.getElementById(region).options.add(option);
+                }
+            }
+        }
+        xhr.open('get','region.php?pid='+pid,true);
+        xhr.send(null);
+    }
+    //默认加载所有的省份
+    //select * from region where pid = 1
+    getRegion('1','sheng');
+</script>
+</html>

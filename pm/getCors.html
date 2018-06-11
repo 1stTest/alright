@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>getCors</title>
+</head>
+<body>
+    <button onclick="getWeatherData()">请求native.com</button>
+    <div id="result"></div>
+
+</body>
+<script type="text/javascript">
+    function getWeatherData(){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                alert(xhr.responseText);
+            }
+        } 
+        xhr.open('get','http://www.php26.com/August/0831/pm/cors.php',true);
+        xhr.send(null);
+    }
+</script>
+</html>

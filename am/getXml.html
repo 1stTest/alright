@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> getXml</title>
+</head>
+<body>
+    <button onclick="getXmlData()">获取xml数据</button>
+    <div id="result"></div>
+</body>
+<script type="text/javascript">
+    function getXmlData(){
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                var xml = xhr.responseXML;
+                    console.log(xml);
+                //把后台返回的xml格式数据变成一个文档对象,类似于document对象
+                //取出xml文档中的person节点
+                var persons = xml.getElementsByTagName('person');//返回数组节点集合
+                //循环persons集合,取出每个person几点的username和age的节点的值
+                var html = '';
+                for(var i=0,length=persons.length;i<length;i++){
+                    var username = persons[i].getElementsByTagName('username')[0].innerHTML;
+                    var age = persons[i].getElementsByTagName('age')[0].innerHTML;
+                    html += "用户名:"+username+"--年龄:"+age;
+                }
+                //把拼接好的html写在id
+                document.getElementById('result').innerHTML = html;
+            }
+        }
+        xhr.open('get',"getXml.php",true);
+        xhr.send(null);
+    }
+</script>
+</html>

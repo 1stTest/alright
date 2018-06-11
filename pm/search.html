@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>search</title>
+    <style>
+    #big{
+        border:1px solid lightgray;
+        width: 200px;
+        display: none;
+        background-color:lightblue;
+    }
+    .small{
+        width:200px;
+        border:1px solid red;
+    }
+    </style>
+</head>
+<body>
+    <input type="text" id="keyword"><button>百度一下</button>
+    <div id="big"></div>
+    
+    
+</body>
+<script type="text/javascript">
+/*如果页面上面其他的元素也绑定了单击事件,阻止事件传播*/
+    var keyword = document.getElementById("keyword");
+    var big = document.getElementById('big');
+    //给搜索框绑定onkeyup事件
+    keyword.onkeyup = function(){
+        var val = this.value;//获取到当前搜索框中的值
+        if(val==''){
+            big.style.display = 'none';
+            return false;//不需要请求
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4&&xhr.status == 200){
+                var json = JSON.parse(xhr.responseText);
+                for(var i=0,length=json.length;i<length;i++){
+                    var goods_name = json[i].goods_name;
+                    //创建小div且绑定三个事件document.createElement
+                    html = "";
+                    html += "<div class='small' onmouseover='over(this)' onmouseout='out(this)' onclick='cloneText(this)'>"+goods_name+"</div>";
+                    //把html追加到大div中去,且让大div显示
+                }
+                big.innerHTML = html;
+                    big.style.display = "block";
+
+            }
+        }
+        xhr.open('get','search.php?keyword='+val,true);
+        xhr.send(null);
+    }
+    //定义onmouseover事件
+    function over(obj){
+        obj.style.backgroundColor = "#ccc";
+
+    }
+    function out(obj){
+        obj.style.backgroundColor = "";
+    }
+    //定义onclick事件
+    function cloneText(obj){
+        //阻止事件冒泡,阻止事件向上出传播
+        var event = event||window.event;
+        if(event.stopPropagation){
+            event.stopPropagation();
+        }else{
+            event.cancelBubble = true;
+        }
+        // console.log('cloneText');
+        //把当前的小div内容赋值给搜索框,隐藏大div
+        keyword.value = obj.innerHTML;
+        big.style.display = 'none';
+    }
+    //给window绑定单击事件
+    window.onclick = function(event){
+        var event = event||window.event;
+        //获取目标元素
+        var target = event.target||event.srcElement;
+        //如果类名为空或者id为空,给打div隐藏
+        if(target.className == '' || target.id == ''){
+            big.style.display = 'none';
+
+
+        }    
+         
+
+         // console.dir(target);
+        
+        // console.log('window');
+    }
+</script>
+</html>
